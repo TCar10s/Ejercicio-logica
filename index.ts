@@ -10,7 +10,8 @@ readCsv().then((data) => {
   console.group('→ Muertes por estado:');
   console.info(`  El estado con el mayor acumulado de muertes es ${stateWithMoreDeaths.state} con ${stateWithMoreDeaths.totalDeaths} muertes.` );
   console.info(`  El estado con el menor acumulado de muertes es ${stateWithLessDeaths.state} con ${stateWithLessDeaths.totalDeaths} muertes.`);
-  // console.table(groupedData);
+  console.table(groupedData.slice(0, 5));
+  console.log('⚠️ Mostrando 5 de 58 estados ⚠️');
   console.groupEnd();
 
   
@@ -21,9 +22,8 @@ readCsv().then((data) => {
   console.group('→ Estado mas afectado por covid-19:');
   console.info(`  El estado más afectado fue New Jersey debido a su relacion entre cantidad de muertes 
   y poblacion, es decir, cuenta con el mayor porcentaje de muertes. Ver en la siguiente tabla.`);
-
+  
   console.table(percentage.slice(0, 5));
   console.log('⚠️ Mostrando 5 de 58 estados ⚠️');
-  
   console.groupEnd();
 });
