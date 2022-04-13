@@ -20,79 +20,23 @@ const readCsv = (): Promise<IRow[]> => {
 };
 
 readCsv().then((data) => {
-  // console.log(data
-  //   .filter(row => row.state === 'California')
-  // );
-
-  // console.log(combineDataByState(data));
-  console.log(data);
-  
-  
-  // console.log(combineDataByState(data));
+  const groupedData = groupDataByState(data);
+  console.log(groupedData);
 });
 
-function combineDataByState(data: IRow[]) {
-  // combine data and sum deaths, population by state
-  // for(const item in data) {
-  //   const state = data[item].state;
-  //   const deaths = data[item].totalDeaths;
-  //   const population = data[item].population;
-  //   const stateData = data.filter(row => row.state === state);
-  //   const deathsSum = sumListOfNumbers(stateData.map(row => row.totalDeaths));
-  //   const populationSum = sumListOfNumbers(stateData.map(row => row.population));
-  //   const stateDataCombined = {
-  //     state,
-  //     deaths: deathsSum,
-  //     population: populationSum,
-  //   };
-  //   console.log(stateDataCombined);
-  // }
+function groupDataByState(data: any[]) {
+  const groupedData = data.reduce((acc, curr) => {
+    const { state, totalDeaths, population } = curr;
+
+    if (acc[state]) {
+      acc[state].totalDeaths += totalDeaths;
+      acc[state].population += population;
+    } else {
+      acc[state] = { totalDeaths, population };
+    }
+
+    return acc;
+  }, {});
+
+  return groupedData;
 }
-
-
-
-// function groupSubDataByState(data: Row[]) {
-//   const groupedData: { [key: string]: Row[] } = {};
-
-//   data.forEach((row) => {
-//     const { state } = row;
-//     if (!groupedData[state]) {
-//       groupedData[state] = [];
-//     }
-//     groupedData[state].push(row);
-//   });
-
-//   return groupedData;
-// }
-
-// function combineDataByState(data: IRow[]) {
-//   const groupedData: { [key: string]: IRow[] } = {};
-
-//   data.forEach((row) => {
-//     const { state } = row;
-//     if (!groupedData[state]) {
-//       groupedData[state] = [];
-//     }
-//     groupedData[state].push(row);
-//   });
-
-//   return groupedData;
-// }
-
-// function stateWithHighestDeaths(data: Row[]) {
-//   const stateWithHighestDeaths = data
-//     .sort((a, b) => b.dates[b.dates.length - 1].value - a.dates[a.dates.length - 1].value)
-//     .map((row) => row.state)
-//     .slice(0, 1);
-
-//   return stateWithHighestDeaths;
-// }
-
-// function stateWithFewestDeaths(data: Row[]) {
-//   const stateWithFewestDeaths = data
-//     .sort((a, b) => a.dates[a.dates.length - 1].value - b.dates[b.dates.length - 1].value)
-//     .map((row) => row.state)
-//     .slice(0, 1);
-
-//   return stateWithFewestDeaths;
-// }
