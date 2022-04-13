@@ -5,3 +5,14 @@ export interface IRow {
   totalDeaths: number;
 }
 
+export interface IGroupedData {
+  [key: string]: {
+    totalDeaths: number;
+    population: number;
+  };
+}
+
+export interface IPercentage {
+  state: string;
+  percentage: number;
+}
