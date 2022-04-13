@@ -1,21 +1,10 @@
 import { IRow } from './interfaces';
 
-export function formatDates([date, value]: [date: any, value: any]) {
-  const auxDate = new Date(date);
-  const formattedDate = `${auxDate.getDate()}/${
-    auxDate.getMonth() + 1
-  }/${auxDate.getFullYear()}`;
+const getTheLastRecordOfList = (deaths: number[]): number => {
+  return Number(deaths[deaths.length - 1]);
+};
 
-  return {
-    date: formattedDate,
-    value: parseInt(value),
-  };
-}
-
-const getHighestNumberOfDeaths = (deaths: number[]): number =>
-  Math.max(...deaths);
-
-export function formatRows(row: any): IRow {
+export const formatRows = (row: any): IRow => {
   const {
     UID,
     iso2,
@@ -32,13 +21,29 @@ export function formatRows(row: any): IRow {
     ...dates
   } = row;
 
+  const deaths = Object.values<number>(dates);
+
   return {
     state,
     region,
     population: Number(population),
-    totalDeaths: getHighestNumberOfDeaths(Object.values(dates)),
+    totalDeaths: getTheLastRecordOfList(deaths),
   };
-}
+};
 
-export const sumListOfNumbers = (list: number[]): number =>
-  list.reduce((acc, curr) => acc + curr, 0);
+export const groupDataByState = (data: any[]) => {
+  const groupedData = data.reduce((acc, curr) => {
+    const { state, totalDeaths, population } = curr;
+
+    if (acc[state]) {
+      acc[state].totalDeaths += totalDeaths;
+      acc[state].population += population;
+    } else {
+      acc[state] = { totalDeaths, population };
+    }
+
+    return acc;
+  }, {});
+
+  return groupedData;
+};
