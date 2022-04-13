@@ -1,51 +1,27 @@
-import csv from 'csv-parser';
-import fs from 'fs';
-
-import { IRow } from './interfaces';
-import {
-  formatRows,
-  getStateWithTheHighestAccumulated,
-  getStateWithTheLowestAccumulated,
-  groupDataByState,
-  percentageOfDeaths,
-} from './utilities';
-
-const readCsv = (): Promise<IRow[]> => {
-  const rows: IRow[] = [];
-
-  return new Promise((resolve, reject) => {
-    fs.createReadStream('time_series_covid19_deaths_US.csv')
-      .pipe(csv())
-      .on('data', (row) => {
-        rows.push(formatRows(row));
-      })
-      .on('end', () => {
-        resolve(rows);
-      });
-  });
-};
+import { groupDataByState, percentageOfDeaths, readCsv } from './functions';
 
 readCsv().then((data) => {
   const groupedData = groupDataByState(data);
 
-  const lowestAccumulated = getStateWithTheLowestAccumulated(groupedData);
-  const highestAccumulated = getStateWithTheHighestAccumulated(groupedData);
+  const stateWithMoreDeaths = groupedData[0];
+  const stateWithLessDeaths = groupedData[groupedData.length - 1];
+
+  console.group('Muertes por estado:');
 
   console.log(
-    `El estado con el mayor acumulado de muertes es ${highestAccumulated.state} con ${highestAccumulated.totalDeaths} muertes`
+    `El estado con el mayor acumulado de muertes es ${stateWithMoreDeaths.state} con ${stateWithMoreDeaths.totalDeaths} muertes`
   );
 
   console.log(
-    `El estado con el menor acumulado de muertes es ${lowestAccumulated.state} con ${lowestAccumulated.totalDeaths} muertes`
+    `El estado con el menor acumulado de muertes es ${stateWithLessDeaths.state} con ${stateWithLessDeaths.totalDeaths} muertes`
   );
 
-  console.log(groupedData);
-  
+  console.table(groupedData);
+  console.groupEnd();
 
-  console.log(`El porcentaje de muertes en cada estado es:`);
-  console.table(percentageOfDeaths(groupedData));
+  const percentage = percentageOfDeaths(groupedData);
+
+  console.group('Porcentaje de muertes por estado:');
+  console.table(percentage);
+  console.groupEnd();
 });
-
-// Percentage of deaths vs. total population by state
-
-
