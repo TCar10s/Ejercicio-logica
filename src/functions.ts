@@ -12,7 +12,7 @@ export const readCsv = (): Promise<RowExcel[]> => {
   const rows: RowExcel[] = [];
 
   return new Promise((resolve) => {
-    fs.createReadStream('time_series_covid19_deaths_US.csv')
+    fs.createReadStream(__dirname + '/assets/time_series_covid19_deaths_US.csv')
       .pipe(
         csv({
           mapHeaders: ({ header }) => header.toLowerCase(),

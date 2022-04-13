@@ -7,5 +7,5 @@ npm install
 
 ### Para ejecutar el script use:
 ```
-ts-node index.ts
+npm start
 ```
