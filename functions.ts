@@ -1,15 +1,24 @@
 import csv from 'csv-parser';
 import fs from 'fs';
 
+import {
+  calculatePercentage,
+  parsePopulationAndDeathsToNumber,
+  sortArrayByState,
+} from './utilities';
 import { GroupedData, Percentage, RowExcel, StateDetail } from './interfaces';
-import { calculatePercentage, sortArrayByState } from './utilities';
 
 export const readCsv = (): Promise<RowExcel[]> => {
   const rows: RowExcel[] = [];
 
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     fs.createReadStream('time_series_covid19_deaths_US.csv')
-      .pipe(csv())
+      .pipe(
+        csv({
+          mapHeaders: ({ header }) => header.toLowerCase(),
+          mapValues: (row) => parsePopulationAndDeathsToNumber(row),
+        })
+      )
       .on('data', (row) => {
         rows.push(formatRows(row));
       })
@@ -21,28 +30,28 @@ export const readCsv = (): Promise<RowExcel[]> => {
 
 const formatRows = (row: any): RowExcel => {
   const {
-    UID,
+    uid,
     iso2,
     iso3,
     code3,
-    FIPS,
-    Admin2,
-    Province_State: state,
-    Country_Region: region,
-    Lat,
-    Long_,
-    Combined_Key,
-    Population: population,
+    fips,
+    admin2,
+    province_state: state,
+    country_region: region,
+    lat,
+    long_,
+    combined_key,
+    population,
     ...dates
   } = row;
 
-  const numberOfdeaths = Object.values<number>(dates);
+  const totalDeaths = Object.values(dates).pop() as number;
 
   return {
     state,
     region,
-    population: Number(population),
-    totalDeaths: Number(numberOfdeaths[numberOfdeaths.length - 1]),
+    population,
+    totalDeaths,
   };
 };
 

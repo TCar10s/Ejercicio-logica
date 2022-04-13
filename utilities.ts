@@ -1,6 +1,5 @@
 import { GroupedData, StateDetail } from './interfaces';
 
-
 export const calculatePercentage = (
   totalDeaths: number,
   population: number
@@ -21,4 +20,16 @@ export const sortArrayByState = (groupedData: GroupedData): StateDetail[] => {
       };
     })
     .sort((a, b) => b.totalDeaths - a.totalDeaths);
+};
+
+export const parsePopulationAndDeathsToNumber = ({
+  header,
+  index,
+  value,
+}: any): number => {
+  if (header === 'population' || header.includes('/')) {
+    return parseInt(value);
+  }
+
+  return value;
 };
